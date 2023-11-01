@@ -620,25 +620,55 @@ func (c *ContractCaller) DecodeValidatorStakeUpdateEvent(contractAddress common.
 		event = new(stakinginfo.StakinginfoStakeUpdate)
 		found = false
 	)
-
+	fmt.Print("HERE1")
 	for _, vLog := range receipt.Logs {
-		if uint64(vLog.Index) == logIndex && bytes.Equal(vLog.Address.Bytes(), contractAddress.Bytes()) {
+		if uint64(vLog.Index) == logIndex {
 			found = true
-
+			fmt.Print("HERE2")
 			if err := UnpackLog(&c.StakingInfoABI, event, stakeUpdateEvent, vLog); err != nil {
 				return nil, err
 			}
+			fmt.Print("HERE2")
 
 			break
+
 		}
 	}
 
 	if !found {
+		fmt.Print("HERE3")
 		return nil, errors.New("event not found")
 	}
 
+	fmt.Println("Event", event.NewAmount, event.Nonce, event.ValidatorId)
+
 	return event, nil
 }
+
+// func (c *ContractCaller) DecodeValidatorStakeUpdateEvent(contractAddress common.Address, receipt *ethTypes.Receipt, logIndex uint64) (*stakinginfo.StakinginfoStakeUpdate, error) {
+// 	var (
+// 		event = new(stakinginfo.StakinginfoStakeUpdate)
+// 		found = false
+// 	)
+
+// 	for _, vLog := range receipt.Logs {
+// 		if uint64(vLog.Index) == logIndex && bytes.Equal(vLog.Address.Bytes(), contractAddress.Bytes()) {
+// 			found = true
+
+// 			if err := UnpackLog(&c.StakingInfoABI, event, stakeUpdateEvent, vLog); err != nil {
+// 				return nil, err
+// 			}
+
+// 			break
+// 		}
+// 	}
+
+// 	if !found {
+// 		return nil, errors.New("event not found")
+// 	}
+
+// 	return event, nil
+// }
 
 // DecodeValidatorExitEvent represents validator stake unStake event
 func (c *ContractCaller) DecodeValidatorExitEvent(contractAddress common.Address, receipt *ethTypes.Receipt, logIndex uint64) (*stakinginfo.StakinginfoUnstakeInit, error) {
